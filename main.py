@@ -349,6 +349,7 @@ else:
 			visualize(vis_code, os.path.join(opt.save_path, 'samples', 'sample_{0}.jpg'.format(current_iter)))
 
 		if current_iter % opt.test_interval == 0:
+			print('Testing ...')
 			current_loss = test()
 			log = {
 				'training_loss' : loss_record,
