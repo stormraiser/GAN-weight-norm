@@ -13,3 +13,5 @@ To train, run `main.py`. See the code for a explanation of arguments. The only o
 Give `--load_path` to continue a saved training.
 
 To test a trained model, use `--final_test`. Make sure to also use a larger `--test_steps` since the default value is for the running test during training.
+
+Use `plot.py` to plot the loss curves. Requires PyGnuplot.
