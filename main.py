@@ -201,12 +201,14 @@ def save_state(path, prefix):
 	torch.save(state, os.path.join(opt.save_path, 'net_archive', '{0}_state.pt'.format(prefix)))
 
 def visualize(code, filename):
+	gen.eval()
 	generated = torch.Tensor(code.size(0), 3, opt.height, opt.width)
 	for i in range((code.size(0) - 1) // opt.batch_size + 1):
 		batch_size = min(opt.batch_size, code.size(0) - i * opt.batch_size)
 		batch_code = Variable(code[i * opt.batch_size : i * opt.batch_size + batch_size])
 		generated[i * opt.batch_size : i * opt.batch_size + batch_size].copy_(gen(batch_code).data)
 	torchvision.utils.save_image(generated * 2 - 1, filename, opt.vis_row)
+	gen.train()
 
 def test():
 	test_loss = 0
