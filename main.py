@@ -212,6 +212,7 @@ def test():
 	test_loss = 0
 	for param in gen.parameters():
 		param.requires_grad = False
+	gen.eval()
 	best_code = torch.Tensor(test_index.size(0), opt.code_size).cuda()
 	total_batch = (test_index.size(0) - 1) // opt.batch_size + 1
 
@@ -248,6 +249,7 @@ def test():
 
 	for param in gen.parameters():
 		param.requires_grad = True
+	gen.train()
 	if not opt.final_test:
 		visualize(best_code[0 : min(test_index.size(0), opt.vis_row * opt.vis_col)], os.path.join(opt.save_path, 'running_test', 'test_{0}.jpg'.format(current_iter)))
 	test_loss = test_loss / test_index.size(0)
