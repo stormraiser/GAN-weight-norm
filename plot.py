@@ -41,8 +41,9 @@ for k, load_path in enumerate(opt.load_paths):
 	for i in range(n):
 		x[i] = logs[i][0]
 		y[i] = logs[i][1]
-	pg.s([x.numpy(), y.numpy()])
+	plot_name = '{0}-{1}'.format(k, os.path.basename(load_path))
+	pg.s([x.numpy(), y.numpy()], plot_name)
 	if k == 0:
-		pg.c('plot "tmp.dat" with lines')
+		pg.c('plot "{0}" with lines'.format(plot_name))
 	else:
-		pg.c('replot "tmp.dat" with lines')
+		pg.c('replot "{0}" with lines'.format(plot_name))
