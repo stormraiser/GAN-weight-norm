@@ -252,6 +252,7 @@ def test():
 		visualize(best_code[0 : min(test_index.size(0), opt.vis_row * opt.vis_col)], os.path.join(opt.save_path, 'running_test', 'test_{0}.jpg'.format(current_iter)))
 	test_loss = test_loss / test_index.size(0)
 	print('loss = {0}'.format(test_loss))
+	return test_loss
 
 if opt.final_test:
 	load_state(opt.load_path, opt.net, True)
