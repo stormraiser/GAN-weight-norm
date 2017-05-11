@@ -37,9 +37,9 @@ class _WeightNormalizedConvNd(_ConvNd):
 		for i in range(len(self.kernel_size)):
 			weight_norm = weight_norm.sum(2 + i)
 		weight_norm = weight_norm.mul(self.weight_norm_factor).add(1e-6).sqrt()
-		if self.scale is not None:
-			weight_norm = weight_norm.div(self.scale)
 		normalized_weight = self.weight.div(weight_norm.expand_as(self.weight))
+		if self.scale is not None:
+			normalized_weight = normalized_weight.mul(self.scale.expand_as(self.weight))
 		return normalized_weight
 			
 	def __repr__(self):

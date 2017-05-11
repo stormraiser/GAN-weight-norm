@@ -29,9 +29,9 @@ class WeightNormalizedLinear(Module):
 
     def normalized_weight(self):
         weight_norm = self.weight.pow(2).sum(1).add(1e-6).sqrt()
-        if self.scale is not None:
-            weight_norm = weight_norm.div(self.scale)
         normalized_weight = self.weight.div(weight_norm.expand_as(self.weight))
+        if self.scale is not None:
+            normalized_weight = normalized_weight.mul(self.scale.expand_as(self.weight))
         return normalized_weight
 
     def forward(self, input):
