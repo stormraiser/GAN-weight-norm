@@ -139,9 +139,9 @@ function load(prefix, gen_only)
 end
 
 function save(prefix)
-    torch.save(paths.concat(opt.save_path, 'net_archive', prefix .. '_gen.t7'), gen)
+    torch.save(paths.concat(opt.save_path, 'net_archive', prefix .. '_gen.t7'), gen:clearState())
     torch.save(paths.concat(opt.save_path, 'net_archive', prefix .. '_gen_state.t7'), gen_state)
-    torch.save(paths.concat(opt.save_path, 'net_archive', prefix .. '_dis.t7'), dis)
+    torch.save(paths.concat(opt.save_path, 'net_archive', prefix .. '_dis.t7'), dis:clearState())
     torch.save(paths.concat(opt.save_path, 'net_archive', prefix .. '_dis_state.t7'), dis_state)
     torch.save(paths.concat(opt.save_path, 'net_archive', prefix .. '_state.t7'), state)
 end
