@@ -361,7 +361,7 @@ else
         end
 
         if state.current_iter % opt.save_interval == 0 then
-            save_state(tostring(state.current_iter))
+            save(tostring(state.current_iter))
         end
     end
 end
