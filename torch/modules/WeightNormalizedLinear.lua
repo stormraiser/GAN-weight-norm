@@ -28,7 +28,7 @@ function WNL:__init(nInput, nOutput, hasScale, hasBias, initWeightFactor)
 		self.bias = torch.zeros(nOutput)
 		self.gradBias = torch.zeros(nOutput)
 	end
-	self.eps = 1e-6
+	self.eps = 1e-8
 	self:updateStats()
 end
 
@@ -74,13 +74,13 @@ function WNL:accGradParameters(input, gradOutput, scale)
 				):reshape(input:size(1), 1, self.nOutput):expand(input:size(1), self.nInput, self.nOutput)
 			),
 			self.gradTmp:reshape(input:size(1), 1, self.nOutput):expand(input:size(1), self.nInput, self.nOutput)
-		):mean(1)[1]
+		):sum(1)[1]
 	)
 	if self.hasScale then
-		self.gradScale:add(scale, torch.cmul(self.tmp, gradOutput):mean(1)[1])
+		self.gradScale:add(scale, torch.cmul(self.tmp, gradOutput):sum(1)[1])
 	end
 	if self.hasBias then
-		self.gradBias:add(scale, gradOutput:mean(1)[1])
+		self.gradBias:add(scale, gradOutput:sum(1)[1])
 	end
 end
 

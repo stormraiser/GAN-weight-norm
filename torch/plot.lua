@@ -4,7 +4,7 @@ local gnuplot = require 'gnuplot'
 local paths = require 'paths'
 
 parser = argparse()
-parser:option('--load_paths', 'paths to experiments to plot'):count('+')
+parser:option('--load_paths', 'paths to experiments to plot'):args('+')
 parser:option('--type', 'test | dis | dis-real | dis-fake | gen', 'test')
 parser:option('--interval', 'window size for averaged discriminator loss', 100, tonumber)
 opt = parser:parse()

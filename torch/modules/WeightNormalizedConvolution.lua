@@ -58,12 +58,12 @@ end
 
 function WNC:accGradParameters(input, gradOutput, scale)
 	self.conv:accGradParameters(input, self.gradTmp, scale)
-	self.conv.gradWeight:add(-scale, torch.cmul(self.conv.weight, torch.cdiv(torch.cmul(self.conv.output, self.gradTmp):mean(1):mean(3):mean(4):reshape(self.nOutput), torch.pow(self.weightNorm, 2)):reshape(self.nOutput, 1, 1, 1):expandAs(self.conv.weight)))
+	self.conv.gradWeight:add(-scale, torch.cmul(self.conv.weight, torch.cdiv(torch.cmul(self.conv.output, self.gradTmp):sum(1):sum(3):sum(4):reshape(self.nOutput), torch.pow(self.weightNorm, 2)):reshape(self.nOutput, 1, 1, 1):expandAs(self.conv.weight)))
 	if self.hasScale then
-		self.gradScale:add(scale, torch.cmul(gradOutput, torch.cdiv(self.conv.output, self.weightNorm:reshape(1, self.nOutput, 1, 1):expandAs(self.conv.output))):mean(1):mean(3):mean(4):reshape(self.nOutput))
+		self.gradScale:add(scale, torch.cmul(gradOutput, torch.cdiv(self.conv.output, self.weightNorm:reshape(1, self.nOutput, 1, 1):expandAs(self.conv.output))):sum(1):sum(3):sum(4):reshape(self.nOutput))
 	end
 	if self.hasBias then
-		self.gradBias:add(scale, gradOutput:mean(1):mean(3):mean(4):reshape(self.nOutput))
+		self.gradBias:add(scale, gradOutput:sum(1):sum(3):sum(4):reshape(self.nOutput))
 	end
 end
 

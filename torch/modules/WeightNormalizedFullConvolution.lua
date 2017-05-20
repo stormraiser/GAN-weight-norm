@@ -5,7 +5,7 @@ local WNFC, parent = torch.class('nn.WeightNormalizedFullConvolution', 'nn.Modul
 function WNFC:__init(nInput, nOutput, kw, kh, dw, dh, pw, ph, hasScale, hasBias)
 	parent.__init(self)
 	self.conv = nn.SpatialFullConvolution(nInput, nOutput, kw, kh, dw, dh, pw, ph):noBias()
-	self.weightNormFactor = dw * dh
+	self.weightNormFactor = math.sqrt(dw * dh)
 	if hasScale == nil then
 		self.hasScale = true
 	else
@@ -31,7 +31,7 @@ function WNFC:__init(nInput, nOutput, kw, kh, dw, dh, pw, ph, hasScale, hasBias)
 end
 
 function WNFC:updateStats()
-	self.weightNorm = torch.sqrt(torch.add(torch.pow(self.conv.weight, 2):sum(1):sum(3):sum(4) / self.weightNormFactor, self.eps)):reshape(self.nOutput)
+	self.weightNorm = torch.sqrt(torch.add(torch.pow(self.conv.weight, 2):sum(1):sum(3):sum(4), self.eps)):reshape(self.nOutput)
 end
 
 function WNFC:updateOutput(input)
@@ -40,6 +40,7 @@ function WNFC:updateOutput(input)
 	if self.hasScale then
 		self.output:cmul(self.scale:reshape(1, self.nOutput, 1, 1):expandAs(self.conv.output))
 	end
+	self.output:mul(self.weightNormFactor)
 	if self.hasBias then
 		self.output:add(self.bias:reshape(1, self.nOutput, 1, 1):expandAs(self.conv.output))
 	end
@@ -51,6 +52,7 @@ function WNFC:updateGradInput(input, gradOutput)
 	if self.hasScale then
 		self.gradTmp:cmul(self.scale:reshape(1, self.nOutput, 1, 1):expandAs(gradOutput))
 	end
+	self.gradTmp:mul(self.weightNormFactor)
 	self.gradTmp:cdiv(self.weightNorm:reshape(1, self.nOutput, 1, 1):expandAs(gradOutput))
 	self.conv:updateGradInput(input, self.gradTmp)
 	self.gradInput = self.conv.gradInput
@@ -59,12 +61,12 @@ end
 
 function WNFC:accGradParameters(input, gradOutput, scale)
 	self.conv:accGradParameters(input, self.gradTmp, scale)
-	self.conv.gradWeight:add(-scale, torch.cmul(self.conv.weight, torch.cdiv(torch.cmul(self.conv.output, self.gradTmp):mean(1):mean(3):mean(4):reshape(self.nOutput), torch.pow(self.weightNorm, 2)):reshape(1, self.nOutput, 1, 1):expandAs(self.conv.weight)))
+	self.conv.gradWeight:add(-scale, torch.cmul(self.conv.weight, torch.cdiv(torch.cmul(self.conv.output, self.gradTmp):sum(1):sum(3):sum(4):reshape(self.nOutput), torch.pow(self.weightNorm, 2)):reshape(1, self.nOutput, 1, 1):expandAs(self.conv.weight)))
 	if self.hasScale then
-		self.gradScale:add(scale, torch.cmul(gradOutput, torch.cdiv(self.conv.output, self.weightNorm:reshape(1, self.nOutput, 1, 1):expandAs(self.conv.output))):mean(1):mean(3):mean(4):reshape(self.nOutput))
+		self.gradScale:add(scale * self.weightNormFactor, torch.cmul(gradOutput, torch.cdiv(self.conv.output, self.weightNorm:reshape(1, self.nOutput, 1, 1):expandAs(self.conv.output))):sum(1):sum(3):sum(4):reshape(self.nOutput))
 	end
 	if self.hasBias then
-		self.gradBias:add(scale, gradOutput:mean(1):mean(3):mean(4):reshape(self.nOutput))
+		self.gradBias:add(scale, gradOutput:sum(1):sum(3):sum(4):reshape(self.nOutput))
 	end
 end
 

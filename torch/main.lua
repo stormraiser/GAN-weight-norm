@@ -38,9 +38,25 @@ parser:option('--save_interval', 'how often to save network', 20000, tonumber)
 parser:option('--niter', 'number of iterations to train', 1000000, tonumber)
 parser:flag('--final_test', 'do final test')
 parser:option('--net', 'network to load for final test: best | last | <niter>', 'best')
+parser:option('--gpu', 'id of the gpu to use', 1, tonumber)
+
+function update_stats(module)
+    if torch.typename(module) == 'nn.WeightNormalizedLinear'
+        or torch.typename(module) == 'nn.WeightNormalizedConvolution'
+        or torch.typename(module) == 'nn.WeightNormalizedFullConvolution' then
+        module:updateStats()
+    end
+end
+
+function prelu_clamp(module)
+    if torch.typename(module) == 'nn.PReLU' or torch.typename(module) == 'nn.TPReLU' then
+        module.weight:clamp(0, 1)
+    end
+end
 
 local opt = parser:parse()
 print(opt)
+cutorch.setDevice(opt.gpu)
 
 opt.tr_width = opt.width
 opt.tr_height = opt.height
@@ -59,6 +75,9 @@ local function transform(input)
     else
         output = image.scale(output, string.format("^%d", opt.image_size))
         output = image.crop(output, "c", opt.image_size, opt.image_size)
+    end
+    if output:size(1) == 1 then
+        output = output:expand(3, output:size(2), output:size(3))
     end
     return output
 end
@@ -111,8 +130,10 @@ end
 
 function init()
     gen = build_generator(opt.width, opt.height, opt.nfeature, opt.nlayer, opt.code_size, opt.norm):cuda()
+    gen:apply(update_stats)
     gen_state = {}
     dis = build_discriminator(opt.width, opt.height, opt.nfeature, opt.nlayer, opt.norm):cuda()
+    dis:apply(update_stats)
     dis_state = {}
     state = {
         index_shuffle = torch.randperm(train_index:size(1)),
@@ -272,20 +293,6 @@ else
         alpha = 0.9,
         epsilon = 1e-6
     }
-
-    local function update_stats(module)
-        if torch.typename(module) == 'nn.WeightNormalizedLinear'
-            or torch.typename(module) == 'nn.WeightNormalizedConvolution'
-            or torch.typename(module) == 'nn.WeightNormalizedFullConvolution' then
-            module:updateStats()
-        end
-    end
-
-    local function prelu_clamp(module)
-        if torch.typename(module) == 'nn.PReLU' or torch.typename(module) == 'nn.TPReLU' then
-            module.weight:clamp(0, 1)
-        end
-    end
 
     while state.current_iter < opt.niter do
         state.current_iter = state.current_iter + 1
