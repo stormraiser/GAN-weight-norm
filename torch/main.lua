@@ -233,7 +233,7 @@ function test()
             for j = 1, batch_size do
                 sample_rec_pair:narrow(2, 2, opt.height):narrow(3, 2, opt.width):copy(batch_target[j])
                 sample_rec_pair:narrow(2, 2, opt.height):narrow(3, opt.width + 4, opt.width):copy(last_generated[j])
-                image.save(paths.concat(opt.load_path, opt.net .. '_test', string.format('%d.png', (i - 1) * opt.batch_size + j), sample_rec_pair))
+                image.save(paths.concat(opt.load_path, opt.net .. '_test', string.format('%d.png', (i - 1) * opt.batch_size + j)), sample_rec_pair)
             end
         end
     end
@@ -248,7 +248,7 @@ function test()
 end
 
 if opt.final_test then
-    load(opt.load_path, opt.net, true)
+    load(opt.net, true)
     if not paths.dirp(paths.concat(opt.load_path, opt.net .. '_test')) then
         paths.mkdir(paths.concat(opt.load_path, opt.net .. '_test'))
     end
