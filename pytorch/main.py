@@ -247,7 +247,7 @@ def test():
 			for j in range(batch_size):
 				sample_rec_pair[0].copy_(get_data(test_index[i * opt.batch_size + j]))
 				sample_rec_pair[1].copy_(generated.data[j])
-				torchvision.utils.save_image(sample_rec_pair * 2 - 1, os.path.join(opt.load_path, '{0}_test'.format(opt.net), '{0}.png'.format(i * opt.batch_size + j)), 1)
+				torchvision.utils.save_image(sample_rec_pair * 2 - 1, os.path.join(opt.load_path, '{0}_test'.format(opt.net), '{0}.png'.format(i * opt.batch_size + j)), 2)
 
 	for param in gen.parameters():
 		param.requires_grad = True
@@ -263,7 +263,7 @@ if opt.final_test:
 	if not os.path.exists(os.path.join(opt.load_path, '{0}_test'.format(opt.net))):
 		os.mkdir(os.path.join(opt.load_path, '{0}_test'.format(opt.net)))
 	final_loss = test()
-	torch.save(final_loss, os.path.join(opt.save_path, '{0}_test'.format(opt.net), 'loss.pt'))
+	torch.save(final_loss, os.path.join(opt.load_path, '{0}_test'.format(opt.net), 'loss.pt'))
 else:
 	if opt.load_path is not None:
 		if opt.save_path is None:
