@@ -31,5 +31,12 @@ Read the code to see how other arguments work.
 
 Use `plot.lua/py` to plot the loss curves. The PyTorch version uses [PyGnuplot](https://pypi.python.org/pypi/PyGnuplot) (it sux).
 
-## Notes
-The WN model might fail in the first handful of iterations. This happens especially often if the network is deeper (on LSUN). Just restart training. If it get past iteration 5 it should continue to train without trouble. This effect could be reduced by using a much smaller learning rate for the first say 100 iterations.
+## Example
+
+`th main_mod.lua --dataset folder --dataroot /path/to/img_align_celeba --crop_size 160 --image_size 160 --code_size 256 --norm weight --lr 0.00002 --batch_size 32 --save_path /path/to/save/folder`
+
+This should give you something like this in 200,000 iterations:
+![celeba example](image/celeba_wn_200000.jpg)
+
+## Additional notes
+The WN model might fail in the first handful of iterations. This happens especially often if the network is deeper (on LSUN). Just restart training. If it get past iteration 5 it should continue to train without trouble. This effect could be reduced by using a smaller learning rate for the first couple of iterations.
