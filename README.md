@@ -33,7 +33,7 @@ Use `plot.lua/py` to plot the loss curves. The PyTorch version uses [PyGnuplot](
 
 ## Example
 
-`th main.lua --dataset folder --dataroot /path/to/img_align_celeba --crop_size 160 --image_size 160 --code_size 256 --norm weight --lr 0.00002 --batch_size 32 --save_path /path/to/save/folder`
+`th main.lua --dataset folder --dataroot /path/to/img_align_celeba --crop_size 160 --image_size 160 --code_size 256 --norm weight --lr 0.00002 --save_path /path/to/save/folder`
 
 This should give you something like this in 200,000 iterations:
 ![celeba example](image/celeba_wn_200000.jpg)
