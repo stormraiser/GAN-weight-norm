@@ -253,7 +253,7 @@ if opt.final_test then
         paths.mkdir(paths.concat(opt.load_path, opt.net .. '_test'))
     end
     local final_loss = test()
-    torch.save(final_loss, paths.concat(opt.load_path, opt.net .. '_test', 'loss.t7'))
+    torch.save(paths.concat(opt.load_path, opt.net .. '_test', 'loss.t7'), final_loss)
 else
     if opt.load_path ~= nil then
         if opt.save_path == nil then
