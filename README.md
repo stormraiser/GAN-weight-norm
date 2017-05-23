@@ -21,7 +21,7 @@ To train, run `main.lua/py`. The only ones you must specify are the `--dataset`,
 
 The width and the height of the images are not required to be equal. Nor do they have to be powers of two. They only have to both be even numbers. Image size settings work as follows: if `--crop_size` is specified or if both `--crop_width` and `--crop_height` are specified, the training samples are first cropped to the center. Then, if `--width` and `--height` are both specified, the training samples are resized to that size. Otherwise, they are resized so that the aspect ratio is kept and the length of the shorter edge equals `--image_size`, and then cropped to a square.
 
-If `--nlayers` is set, that many down/up concolution layers are used. Otherwise such layers are added until the size of the feature map is smaller than `8x8`. `--nfeature` specifies the number of features of the first convolution layer.
+If `--nlayer` is set, that many down/up concolution layers are used. Otherwise such layers are added until the size of the feature map is smaller than `8x8`. `--nfeature` specifies the number of features of the first convolution layer.
 
 Set `--load_path` to continue a saved training.
 
