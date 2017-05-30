@@ -40,3 +40,6 @@ This should give you something like this in 200,000 iterations:
 
 ## Additional notes
 The WN model might fail in the first handful of iterations. This happens especially often if the network is deeper (on LSUN). Just restart training. If it get past iteration 5 it should continue to train without trouble. This effect could be reduced by using a smaller learning rate for the first couple of iterations.
+
+## Extra stuff
+At request, added `--ls` flag to use least square loss.
