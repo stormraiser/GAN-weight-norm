@@ -96,6 +96,9 @@ parser.add_argument('--niter',              type = int,   default = 100000,
 parser.add_argument('--final_test',         action = 'store_true', default = False,
 	help = 'do final test')
 
+parser.add_argument('--ls',                 action = 'store_true', default = False,
+	help = 'use LSGAN')
+
 parser.add_argument('--net',                              default = 'best',
 	help = 'network to load for final test: best | last | <niter>')
 
@@ -169,7 +172,10 @@ if not opt.final_test:
 	dis = build_discriminator(opt.width, opt.height, opt.nfeature, opt.nlayer, opt.norm)
 	print(dis)
 	dis.cuda()
-	lossfunc = nn.BCELoss()
+	if opt.ls:
+		lossfunc = nn.MSELoss()
+	else:
+		lossfunc = nn.BCELoss()
 	gen_opt = optim.RMSprop(gen.parameters(), lr = opt.lr, eps = 1e-6, alpha = 0.9)
 	dis_opt = optim.RMSprop(dis.parameters(), lr = opt.lr, eps = 1e-6, alpha = 0.9)
 

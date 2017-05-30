@@ -39,6 +39,7 @@ parser:option('--niter', 'number of iterations to train', 1000000, tonumber)
 parser:flag('--final_test', 'do final test')
 parser:option('--net', 'network to load for final test: best | last | <niter>', 'best')
 parser:option('--gpu', 'id of the gpu to use', 1, tonumber)
+parser:flag('--ls', 'use LSGAN')
 
 function update_stats(module)
     if torch.typename(module) == 'nn.WeightNormalizedLinear'
@@ -124,7 +125,11 @@ test_cri = nn.MSECriterion()
 test_cri:cuda()
 
 if not opt.final_test then
-    train_cri = nn.BCECriterion()
+    if opt.ls then
+        train_cri = nn.MSECriterion()
+    else
+        train_cri = nn.BCECriterion()
+    end
     train_cri:cuda()
 end
 
