@@ -99,6 +99,9 @@ parser.add_argument('--final_test',         action = 'store_true', default = Fal
 parser.add_argument('--ls',                 action = 'store_true', default = False,
 	help = 'use LSGAN')
 
+parser.add_argument('--output_scale',       action = 'store_true', default = False,
+	help = 'save x*2-1 instead of x when saving image')
+
 parser.add_argument('--net',                              default = 'best',
 	help = 'network to load for final test: best | last | <niter>')
 
@@ -213,7 +216,10 @@ def visualize(code, filename):
 		batch_size = min(opt.batch_size, code.size(0) - i * opt.batch_size)
 		batch_code = Variable(code[i * opt.batch_size : i * opt.batch_size + batch_size])
 		generated[i * opt.batch_size : i * opt.batch_size + batch_size].copy_(gen(batch_code).data)
-	torchvision.utils.save_image(generated * 2 - 1, filename, opt.vis_row)
+	if opt.output_scale:
+		torchvision.utils.save_image(generated * 2 - 1, filename, opt.vis_row)
+	else:
+		torchvision.utils.save_image(generated, filename, opt.vis_row)
 	gen.train()
 
 def test():
@@ -253,7 +259,10 @@ def test():
 			for j in range(batch_size):
 				sample_rec_pair[0].copy_(get_data(test_index[i * opt.batch_size + j]))
 				sample_rec_pair[1].copy_(generated.data[j])
-				torchvision.utils.save_image(sample_rec_pair * 2 - 1, os.path.join(opt.load_path, '{0}_test'.format(opt.net), '{0}.png'.format(i * opt.batch_size + j)), 2)
+				if opt.output_scale:
+					torchvision.utils.save_image(sample_rec_pair * 2 - 1, os.path.join(opt.load_path, '{0}_test'.format(opt.net), '{0}.png'.format(i * opt.batch_size + j)), 2)
+				else:
+					torchvision.utils.save_image(sample_rec_pair, os.path.join(opt.load_path, '{0}_test'.format(opt.net), '{0}.png'.format(i * opt.batch_size + j)), 2)
 
 	for param in gen.parameters():
 		param.requires_grad = True
@@ -302,7 +311,10 @@ else:
 		vis_target = torch.Tensor(min(test_index.size(0), opt.vis_row * opt.vis_col), 3, opt.height, opt.width)
 		for i in range(vis_target.size(0)):
 			vis_target[i].copy_(get_data(test_index[i]))
-		torchvision.utils.save_image(vis_target * 2 - 1, os.path.join(opt.save_path, 'running_test', 'target.jpg'), opt.vis_row)
+		if opt.output_scale:
+			torchvision.utils.save_image(vis_target * 2 - 1, os.path.join(opt.save_path, 'running_test', 'target.jpg'), opt.vis_row)
+		else:
+			torchvision.utils.save_image(vis_target, os.path.join(opt.save_path, 'running_test', 'target.jpg'), opt.vis_row)
 
 	ones = Variable(torch.ones(opt.batch_size, 1).cuda())
 	zeros = Variable(torch.zeros(opt.batch_size, 1).cuda())
