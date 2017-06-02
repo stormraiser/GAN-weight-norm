@@ -13,17 +13,11 @@ class _WeightNormalizedConvNd(_ConvNd):
 		super(_WeightNormalizedConvNd, self).__init__(in_channels, out_channels, kernel_size, stride,
 			padding, dilation, transposed, output_padding, 1, False)
 		if scale:
-			if transposed:
-				self.scale = Parameter(torch.ones(1, self.out_channels, *((1,) * len(kernel_size))))
-			else:
-				self.scale = Parameter(torch.ones(self.out_channels, 1, *((1,) * len(kernel_size))))
+			self.scale = Parameter(torch.ones(1, self.out_channels, *((1,) * len(kernel_size))))
 		else:
 			self.register_parameter('scale', None)
 		if bias:
-			if transposed:
-				self.bias = Parameter(torch.zeros(1, self.out_channels, *((1,) * len(kernel_size))))
-			else:
-				self.bias = Parameter(torch.zeros(self.out_channels, 1, *((1,) * len(kernel_size))))
+			self.bias = Parameter(torch.zeros(1, self.out_channels, *((1,) * len(kernel_size))))
 		else:
 			self.register_parameter('bias', None)
 		self.weight.data.mul_(init_factor)
