@@ -6,7 +6,7 @@ from torch.nn.modules.module import Module
 
 class WeightNormalizedLinear(Module):
 
-    def __init__(self, in_features, out_features, scale=True, bias=True, init_factor=1):
+    def __init__(self, in_features, out_features, scale=True, bias=True, init_factor=1, init_scale=1):
         super(WeightNormalizedLinear, self).__init__()
         self.in_features = in_features
         self.out_features = out_features
@@ -16,7 +16,7 @@ class WeightNormalizedLinear(Module):
         else:
             self.register_parameter('bias', None)
         if scale:
-            self.scale = Parameter(torch.ones(1, out_features))
+            self.scale = Parameter(torch.Tensor(1, out_features).fill_(init_scale))
         else:
             self.register_parameter('scale', None)
         self.reset_parameters(init_factor)
