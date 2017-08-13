@@ -65,6 +65,12 @@ if opt.image_size > 0 then
     opt.width = opt.image_size
     opt.height = opt.image_size
 end
+if opt.crop_height < 0 then
+    opt.crop_height = opt.crop_size
+end
+if opt.crop_width < 0 then
+    opt.crop_width = opt.crop_size
+end
 
 local function transform(input)
     output = input
