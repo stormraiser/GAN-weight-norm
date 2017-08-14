@@ -101,7 +101,7 @@ function build_generator(w_out, h_out, f_last, num_up_layers, code_size, norm)
 	end
 
 	for i = 1, num_up_layers - 1 do
-		level = num_up_layers - i
+		level = num_up_layers - i + 1
 
 		if (norm == 'weight') or (norm == 'weight-affine') then
 			net:add(nn.WeightNormalizedFullConvolution(f, f / 2, 4, 4, 2, 2, 1 + pad_w[level], 1 + pad_h[level], (norm == 'weight-affine'), (norm == 'weight-affine')))
