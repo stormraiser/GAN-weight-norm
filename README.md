@@ -1,3 +1,5 @@
+Note: this repo has been discontinued, please check code for newer version of the paper [here](https://github.com/stormraiser/gan-weightnorm-resnet)
+
 # Weight Normalized GAN
 Code for the paper "[On the Effects of Batch and Weight Normalization in Generative Adversarial Networks]( https://arxiv.org/abs/1704.03971)".
 
